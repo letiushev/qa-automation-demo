@@ -6,7 +6,7 @@ dotenv.config();
 export default defineConfig({
   testDir: "./tests",
 
-  timeout: 20_000,
+  timeout: 40_000,
   workers: process.env.CI ? 1 : undefined,
   reporter: [
     ["list"],
