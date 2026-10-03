@@ -1,38 +1,16 @@
-import { test } from "../../fixtures/pages.fixture";
-import { generateEmployee } from "../../utils/testData";
+import { test, expect } from "../../fixtures/employee.fixture";
 
-test("@smoke create, find and delete employee", async ({
+test("@smoke employee can be created and found", async ({
+  employee,
   dashboardPage,
   pimPage,
-  addEmployeePage,
   page,
 }) => {
-  const employee = generateEmployee();
+  await expect(page).toHaveURL(/viewPersonalDetails/);
 
-  await test.step("Open PIM", async () => {
-    await page.goto("/web/index.php/dashboard/index");
-    await dashboardPage.openPim();
-  });
+  await dashboardPage.openPim();
 
-  await test.step("Create employee", async () => {
-    await pimPage.openAddEmployee();
+  await pimPage.searchEmployee(employee.fullName);
 
-    await addEmployeePage.createEmployee(employee.firstName, employee.lastName);
-
-    await addEmployeePage.expectEmployeeCreated();
-  });
-
-  await test.step("Find employee", async () => {
-    await dashboardPage.openPim();
-
-    await pimPage.searchEmployee(employee.fullName);
-
-    await pimPage.expectEmployeeInResults(employee.fullName);
-  });
-
-  await test.step("Delete employee", async () => {
-    await pimPage.deleteEmployee(employee.fullName);
-
-    await pimPage.expectEmployeeDeleted(employee.fullName);
-  });
+  await pimPage.expectEmployeeInResults(employee.fullName);
 });
