@@ -5,3 +5,4 @@ test("@smoke open PIM page", async ({ dashboardPage, pimPage }) => {
   await dashboardPage.openPim();
   await pimPage.expectOpened();
 });
+//test branch protection
