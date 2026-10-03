@@ -15,12 +15,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
 
-    container:
-      image: mcr.microsoft.com/playwright:v1.63.0-noble
-      options: --user 1001
-
     env:
-      CI: true
       BASE_URL: ${{ secrets.BASE_URL }}
       ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
@@ -29,16 +24,20 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v6
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
+      - name: Build Docker image
+        run: docker build -t demo-playwright-ts .
 
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run Playwright tests
-        run: npm test
+      - name: Run tests in Docker
+        run: |
+          docker run --rm \
+            -e CI=true \
+            -e BASE_URL="${BASE_URL}" \
+            -e ADMIN_USERNAME="${ADMIN_USERNAME}" \
+            -e ADMIN_PASSWORD="${ADMIN_PASSWORD}" \
+            -v ${{ github.workspace }}/playwright-report:/app/playwright-report \
+            -v ${{ github.workspace }}/test-results:/app/test-results \
+            -v ${{ github.workspace }}/allure-results:/app/allure-results \
+            demo-playwright-ts
 
       - name: Upload Playwright report
         if: ${{ !cancelled() }}
