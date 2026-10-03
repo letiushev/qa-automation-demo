@@ -1,4 +1,4 @@
-import { test, expect } from "../../fixtures/pages.fixture";
+import { test } from "../../fixtures/pages.fixture";
 import { generateEmployee } from "../../utils/testData";
 
 test("@smoke create, find and delete employee", async ({
